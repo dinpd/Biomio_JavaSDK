@@ -3,6 +3,7 @@ package network;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -77,7 +78,9 @@ public class SocketCallManagerTest extends Assert {
 				String refreshToken,
 				String fingerPrint,
 				String headerForDigest,
-				AbstractSocketCallManager callManager) {}
+				AbstractSocketCallManager callManager) {
+			mIsRegularHello = true;
+		}
 		public void onResources(AbstractSocketCallManager callManager) {}
 		public void onTry(String response, AbstractSocketCallManager callManager) {}
 		public void onProbeStatus(String status) {}
@@ -88,32 +91,41 @@ public class SocketCallManagerTest extends Assert {
 	private boolean mIsConnectivityTry;
 	private boolean mIsConnected;
 	private boolean mIsRegistered;
+	private boolean mIsRegularHello;
 	private AbstractSocketCallManager mCallManager;
 	
 	@Test(timeout = CONNECTION_TIMEOUT)
 	public void connectionFlow() throws Exception {
-		connection();
-		disconnection();
+		connectionFlw();
+		disconnectionFlw();
 	}
 	
 	@Test(timeout = CONNECTION_TIMEOUT)
 	public void sendRegistrationHandShake() throws Exception {
-		connection();
+		connectionFlw();
+		registrationFlw();
+		disconnectionFlw();
+	}
+	
+	@Ignore
+	@Test(timeout = CONNECTION_TIMEOUT)
+	public void sendRegularHello() throws Exception {
+		connectionFlw();
+		registrationFlw();
 		assertNotNull(mCallManager);
-		assertNotEquals(DEVICE_SECRET, "");
-		mCallManager.onSendClientHello(DEVICE_SECRET);
+		mCallManager.onSendRegularHello("mockedId");
 		synchronized (uLock) {
-			while (!mIsRegistered || !mIsConnected) {
+			while (!mIsRegularHello && mIsConnected) {
 				uLock.wait();
 			}
-			assertTrue(mIsRegistered);
+			assertTrue(mIsRegularHello);
 		}
-		disconnection();
+		disconnectionFlw();
 	}
 	
 	//Support
 	
-	private void connection() throws Exception {
+	private void connectionFlw() throws Exception {
 		sInstance.subscribe(uListener);
 		assertFalse(mIsConnected);
 		mIsConnectivityTry = true;
@@ -126,8 +138,7 @@ public class SocketCallManagerTest extends Assert {
 		}
 	}
 	
-	private void disconnection() throws Exception {
-		sInstance.subscribe(uListener);
+	private void disconnectionFlw() throws Exception {
 		assertTrue(mIsConnected);
 		mIsConnectivityTry = true;
 		sInstance.disconnect();
@@ -138,6 +149,18 @@ public class SocketCallManagerTest extends Assert {
 			assertFalse(mIsConnected);
 		}
 		sInstance.subscribe(null);
+	}
+	
+	private void registrationFlw() throws Exception {
+		assertNotNull(mCallManager);
+		assertNotEquals(DEVICE_SECRET, "");
+		mCallManager.onSendClientHello(DEVICE_SECRET);
+		synchronized (uLock) {
+			while (!mIsRegistered && mIsConnected) {
+				uLock.wait();
+			}
+			assertTrue(mIsRegistered);
+		}
 	}
 	
 }
