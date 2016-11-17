@@ -19,9 +19,11 @@ import model.Options;
 public class SocketCallManagerTest extends Assert {
 	
 	private static final int CONNECTION_TIMEOUT = 20000;
-	private static final String DEVICE_SECRET = "64845178";
+	private static final String DEVICE_SECRET = "15595343";
 	
 	private static BiomioSDK sInstance;
+	
+	//SETUP
 	
 	@BeforeClass
 	public static void setup() throws NoSuchAlgorithmException {
@@ -37,114 +39,104 @@ public class SocketCallManagerTest extends Assert {
 		BiomioSDK.destroy();
 	}
 	
-	private final Object uLock = new Object();
+	//Fields
 	
+	private final Object uLock = new Object();
+	private final OnBiomioSdkListener uListener = new OnBiomioSdkListener() {
+		public void onConnecting() {}
+		public void onConnected(AbstractSocketCallManager callManager) {
+			mIsConnectivityTry = false;
+			mIsConnected = true;
+			mCallManager = callManager;
+			synchronized (uLock) {
+				uLock.notifyAll();
+			}
+		}
+		public void onDisconnected() {
+			mIsConnectivityTry = false;
+			mIsConnected = false;
+			mCallManager = null;
+			synchronized (uLock) {
+				uLock.notifyAll();
+			}
+		}
+		public void onRegistrationHello(
+				int connectionTtl,
+				int sessionTtl,
+				String refreshToken,
+				String privateKey,
+				String fingerPrint) {
+			mIsRegistered = true;
+			synchronized (uLock) {
+				uLock.notifyAll();
+			}
+		}
+		public void onRegularHello(
+				int connectionTtl,
+				int sessionTtl,
+				String refreshToken,
+				String fingerPrint,
+				String headerForDigest,
+				AbstractSocketCallManager callManager) {}
+		public void onResources(AbstractSocketCallManager callManager) {}
+		public void onTry(String response, AbstractSocketCallManager callManager) {}
+		public void onProbeStatus(String status) {}
+		public void onError(String cause) {}
+		public void onResponseStatus(String status) {}
+	};
+	
+	private boolean mIsConnectivityTry;
 	private boolean mIsConnected;
 	private boolean mIsRegistered;
-	private boolean mIsRecivedRegistrationHello;
+	private AbstractSocketCallManager mCallManager;
 	
 	@Test(timeout = CONNECTION_TIMEOUT)
-	public void connectDisconnect() throws Exception {
-		sInstance.subscribe(new OnBiomioSdkListener() {
-			public void onConnecting() {}
-			public void onConnected(AbstractSocketCallManager callManager) {
-				mIsConnected = true;
-				synchronized (uLock) {
-					uLock.notifyAll();
-				}
-			}
-			public void onDisconnected() {
-				mIsConnected = false;
-				synchronized (uLock) {
-					uLock.notifyAll();
-				}
-			}
-			public void onRegistrationHello(
-					int connectionTtl,
-					int sessionTtl,
-					String refreshToken,
-					String privateKey,
-					String fingerPrint) {}
-			public void onRegularHello(
-					int connectionTtl,
-					int sessionTtl,
-					String refreshToken,
-					String fingerPrint,
-					String headerForDigest,
-					AbstractSocketCallManager callManager) {}
-			public void onResources(AbstractSocketCallManager callManager) {}
-			public void onTry(String response, AbstractSocketCallManager callManager) {}
-			public void onProbeStatus(String status) {}
-			public void onError(String cause) {}
-			public void onResponseStatus(String status) {}
-		});
-		mIsConnected = false;
-		sInstance.connect();
-		synchronized (uLock) {
-			while (!mIsConnected) {
-				uLock.wait();
-			}
-			assertTrue(mIsConnected);
-		}
-		sInstance.disconnect();
-		synchronized (uLock) {
-			while (mIsConnected) {
-				uLock.wait();
-			}
-			assertFalse(mIsConnected);
-		}
-		sInstance.subscribe(null);
+	public void connectionFlow() throws Exception {
+		connection();
+		disconnection();
 	}
 	
 	@Test(timeout = CONNECTION_TIMEOUT)
 	public void sendRegistrationHandShake() throws Exception {
-		sInstance.subscribe(new OnBiomioSdkListener() {
-			public void onConnecting() {}
-			public void onConnected(AbstractSocketCallManager callManager) {
-				mIsConnected = true;
-				assertNotEquals(DEVICE_SECRET, "");
-				callManager.onSendClientHello(DEVICE_SECRET);
-			}
-			public void onDisconnected() {
-				mIsConnected = false;
-				synchronized (uLock) {
-					uLock.notifyAll();
-				}
-			}
-			public void onRegistrationHello(
-					int connectionTtl,
-					int sessionTtl,
-					String refreshToken,
-					String privateKey,
-					String fingerPrint) {
-				mIsRegistered = true;
-				synchronized (uLock) {
-					uLock.notifyAll();
-				}
-			}
-			public void onRegularHello(
-					int connectionTtl,
-					int sessionTtl,
-					String refreshToken,
-					String fingerPrint,
-					String headerForDigest,
-					AbstractSocketCallManager callManager) {}
-			public void onResources(AbstractSocketCallManager callManager) {}
-			public void onTry(String response, AbstractSocketCallManager callManager) {}
-			public void onProbeStatus(String status) {}
-			public void onError(String cause) {}
-			public void onResponseStatus(String status) {}
-		});
-		mIsRegistered = false;
-		sInstance.connect();
+		connection();
+		assertNotNull(mCallManager);
+		assertNotEquals(DEVICE_SECRET, "");
+		mCallManager.onSendClientHello(DEVICE_SECRET);
 		synchronized (uLock) {
 			while (!mIsRegistered || !mIsConnected) {
 				uLock.wait();
 			}
 			assertTrue(mIsRegistered);
 		}
-		
+		disconnection();
+	}
+	
+	//Support
+	
+	private void connection() throws Exception {
+		sInstance.subscribe(uListener);
+		assertFalse(mIsConnected);
+		mIsConnectivityTry = true;
+		sInstance.connect();
+		synchronized (uLock) {
+			while (mIsConnectivityTry) {
+				uLock.wait();
+			}
+			assertTrue(mIsConnected);
+		}
+	}
+	
+	private void disconnection() throws Exception {
+		sInstance.subscribe(uListener);
+		assertTrue(mIsConnected);
+		mIsConnectivityTry = true;
 		sInstance.disconnect();
+		synchronized (uLock) {
+			while (mIsConnectivityTry) {
+				uLock.wait();
+			}
+			assertFalse(mIsConnected);
+		}
 		sInstance.subscribe(null);
 	}
 	
