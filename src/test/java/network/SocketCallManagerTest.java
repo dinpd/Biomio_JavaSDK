@@ -19,8 +19,10 @@ import model.Options;
 @RunWith(JUnit4.class)
 public class SocketCallManagerTest extends Assert {
 	
-	private static final int CONNECTION_TIMEOUT = 20000;
-	private static final String DEVICE_SECRET = "15595343";
+	private static final int CONNECTION_TIMEOUT = 60000;
+	private static final String SECRET = "15595343";
+	private static final String REGULAR_HELLO_INVALID = "event clientHello inappropriate in current state appregistered";
+	private static final String STATUS_TIMEOUT = "Connection timeout";
 	
 	private static BiomioSDK sInstance;
 	
@@ -44,8 +46,11 @@ public class SocketCallManagerTest extends Assert {
 	
 	private final Object uLock = new Object();
 	private final OnBiomioSdkListener uListener = new OnBiomioSdkListener() {
-		public void onConnecting() {}
+		public void onConnecting() {
+			log("onConnecting");
+		}
 		public void onConnected(AbstractSocketCallManager callManager) {
+			log("onConnected");
 			mIsConnectivityTry = false;
 			mIsConnected = true;
 			mCallManager = callManager;
@@ -54,6 +59,7 @@ public class SocketCallManagerTest extends Assert {
 			}
 		}
 		public void onDisconnected() {
+			log("onDisconnected");
 			mIsConnectivityTry = false;
 			mIsConnected = false;
 			mCallManager = null;
@@ -67,6 +73,13 @@ public class SocketCallManagerTest extends Assert {
 				String refreshToken,
 				String privateKey,
 				String fingerPrint) {
+			log(
+					"onRegistrationHello :\n\tconnectionTtl=" + connectionTtl
+							+ " sessionTtl=" + sessionTtl
+							+ " refreshToken=" + refreshToken
+							+ " privateKey=" + privateKey
+							+ " fingerPrint=" + fingerPrint
+			);
 			mIsRegistered = true;
 			synchronized (uLock) {
 				uLock.notifyAll();
@@ -79,32 +92,87 @@ public class SocketCallManagerTest extends Assert {
 				String fingerPrint,
 				String headerForDigest,
 				AbstractSocketCallManager callManager) {
+			log(
+					"onRegistrationHello :\n\tconnectionTtl=" + connectionTtl
+							+ " sessionTtl=" + sessionTtl
+							+ " refreshToken=" + refreshToken
+							+ " fingerPrint=" + fingerPrint
+							+ " headerForDigest=" + headerForDigest
+			);
 			mIsRegularHello = true;
 		}
-		public void onResources(AbstractSocketCallManager callManager) {}
-		public void onTry(String response, AbstractSocketCallManager callManager) {}
-		public void onProbeStatus(String status) {}
-		public void onError(String cause) {}
-		public void onResponseStatus(String status) {}
+		public void onResources(AbstractSocketCallManager callManager) {
+			log("onResources");
+		}
+		public void onTry(String response, AbstractSocketCallManager callManager) {
+			log("onTry :\n\tresponse=" + response);
+		}
+		public void onProbeStatus(String status) {
+			log("onProbeStatus :\n\t" + status);
+		}
+		public void onError(String cause) {
+			log("onError :\n\t" + cause);
+		}
+		public void onResponseStatus(String status) {
+			log("onResponseStatus :\n\t" + status);
+			mStatus = status;
+			synchronized (uLock) {
+				uLock.notifyAll();
+			}
+		}
 	};
 	
 	private boolean mIsConnectivityTry;
 	private boolean mIsConnected;
 	private boolean mIsRegistered;
 	private boolean mIsRegularHello;
+	private String mStatus = "";
 	private AbstractSocketCallManager mCallManager;
 	
-	@Test(timeout = CONNECTION_TIMEOUT)
+	@Test(timeout = CONNECTION_TIMEOUT / 2)
 	public void connectionFlow() throws Exception {
+		subscribe();
+		assertFalse(mIsConnected);
 		connectionFlw();
+		assertTrue(mIsConnected);
 		disconnectionFlw();
+		assertFalse(mIsConnected);
+		unsubscribe();
+		boolean isError = false;
+		try {
+			connectionFlw();
+		} catch (IllegalStateException e) {
+			isError = true;
+		}
+		assertTrue(isError);
 	}
 	
-	@Test(timeout = CONNECTION_TIMEOUT)
-	public void sendRegistrationHandShake() throws Exception {
+	@Test(timeout = CONNECTION_TIMEOUT * 2)
+	public void waitForRegistration() throws Exception {
+		subscribe();
+		assertFalse(mIsConnected);
 		connectionFlw();
-		registrationFlw();
+		assertTrue(mIsConnected);
+		synchronized (uLock) {
+			if (!mStatus.equals(STATUS_TIMEOUT)) {
+				uLock.wait();
+			}
+			assertEquals(mStatus, STATUS_TIMEOUT);
+		}
 		disconnectionFlw();
+		assertFalse(mIsConnected);
+		unsubscribe();
+	}
+	
+	@Test(timeout = CONNECTION_TIMEOUT / 2)
+	public void sendRegistrationHandShake() throws Exception {
+		subscribe();
+		connectionFlw();
+		assertTrue(mIsConnected);
+		registrationFlw();
+		assertTrue(mIsConnected);
+		disconnectionFlw();
+		unsubscribe();
 	}
 	
 	@Ignore
@@ -113,54 +181,63 @@ public class SocketCallManagerTest extends Assert {
 		connectionFlw();
 		registrationFlw();
 		assertNotNull(mCallManager);
-		mCallManager.onSendRegularHello("mockedId");
+		assertNotEquals(mStatus, REGULAR_HELLO_INVALID);
+		mCallManager.sendRegularHello("mockedId");
 		synchronized (uLock) {
 			while (!mIsRegularHello && mIsConnected) {
 				uLock.wait();
 			}
-			assertTrue(mIsRegularHello);
 		}
+		assertEquals(mStatus, REGULAR_HELLO_INVALID);
 		disconnectionFlw();
 	}
 	
 	//Support
 	
-	private void connectionFlw() throws Exception {
+	private void subscribe() {
 		sInstance.subscribe(uListener);
-		assertFalse(mIsConnected);
+	}
+	
+	private void unsubscribe() {
+		sInstance.unsubscribe();
+	}
+	
+	private void connectionFlw() throws Exception {
 		mIsConnectivityTry = true;
 		sInstance.connect();
 		synchronized (uLock) {
 			while (mIsConnectivityTry) {
 				uLock.wait();
 			}
-			assertTrue(mIsConnected);
 		}
 	}
 	
 	private void disconnectionFlw() throws Exception {
-		assertTrue(mIsConnected);
 		mIsConnectivityTry = true;
 		sInstance.disconnect();
 		synchronized (uLock) {
 			while (mIsConnectivityTry) {
 				uLock.wait();
 			}
-			assertFalse(mIsConnected);
 		}
-		sInstance.subscribe(null);
 	}
 	
 	private void registrationFlw() throws Exception {
 		assertNotNull(mCallManager);
-		assertNotEquals(DEVICE_SECRET, "");
-		mCallManager.onSendClientHello(DEVICE_SECRET);
+		assertNotEquals(SECRET, ""); //SECRET must be not empty
+		mCallManager.sendClientHello(SECRET);
 		synchronized (uLock) {
 			while (!mIsRegistered && mIsConnected) {
 				uLock.wait();
 			}
 			assertTrue(mIsRegistered);
 		}
+	}
+	
+	//Logger
+	
+	private void log(String message) {
+		System.out.println(message);
 	}
 	
 }

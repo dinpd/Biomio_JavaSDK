@@ -6,14 +6,14 @@ import java.util.HashMap;
 
 public abstract class AbstractSocketCallManager {
 
-    public abstract void onSendClientHello(String secret);
+    public abstract void sendClientHello(String secret);
 
-    public abstract void onSendRegularHello(String appId);
+    public abstract void sendRegularHello(String appId);
 
-    public abstract void onSendRegularHandShake(String appId, String digest);
+    public abstract void sendRegularHandShake(String appId, String digest);
 
-    public abstract void onSendResources(HashMap<String, String> resourcesMap, String pushToken);
+    public abstract void sendResources(HashMap<String, String> resourcesMap, String pushToken);
 
-    public abstract void onSendProbe(Probe probe);
+    public abstract void sendProbe(Probe probe);
 
 }

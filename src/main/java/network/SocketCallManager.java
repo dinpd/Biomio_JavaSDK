@@ -2,6 +2,7 @@ package network;
 
 
 import com.neovisionaries.ws.client.*;
+
 import main.BiomioSDK;
 import main.OnBiomioSdkListener;
 import model.Probe;
@@ -47,19 +48,22 @@ public class SocketCallManager
      * Opens Socket connection
      */
     public void connect() {
-        sdkListener.onConnecting();
-
-        if (webSocket == null) {
-            webSocket = socketProvider.createWebSocket(sslContext, url);
-        } else {
-            webSocket.removeListener(this);
-            webSocket.disconnect();
-            webSocket = null;
-            webSocket = socketProvider.createWebSocket(sslContext, url);
-        }
-        webSocket.addListener(this);
-        webSocket.connectAsynchronously();
-        Logger.d(TAG + " :: connect");
+		if (sdkListener != null) {
+			sdkListener.onConnecting();
+			
+			if (webSocket == null) {
+				webSocket = socketProvider.createWebSocket(sslContext, url);
+			} else {
+				webSocket.removeListener(this);
+				webSocket.disconnect();
+				webSocket = null;
+				webSocket = socketProvider.createWebSocket(sslContext, url);
+			}
+			webSocket.addListener(this);
+			webSocket.connectAsynchronously();
+			Logger.d(TAG + " :: connect");
+		}
+		 
     }
 
     /**
@@ -128,8 +132,8 @@ public class SocketCallManager
      * @param secret - Code
      */
     @Override
-    public void onSendClientHello(String secret) {
-        Logger.d("onSendClientHello :: " + secret);
+    public void sendClientHello(String secret) {
+        Logger.d("sendClientHello :: " + secret);
 
         JSONObject msg = new JSONObject();
 
@@ -156,7 +160,7 @@ public class SocketCallManager
      * @param appId - appId
      */
     @Override
-    public void onSendRegularHello(String appId) {
+    public void sendRegularHello(String appId) {
         JSONObject header = createHeader();
         JSONObject msg = new JSONObject();
         JSONObject msgBody = new JSONObject();
@@ -182,7 +186,7 @@ public class SocketCallManager
      * @param appId  - fingerprint
      * @param digest - signed header with private key
      */
-    public void onSendRegularHandShake(String appId, String digest) {
+    public void sendRegularHandShake(String appId, String digest) {
         incrementSeq();
 
         JSONObject header = createHeader();
@@ -212,7 +216,7 @@ public class SocketCallManager
      * @param resourcesMap - map of key-value where key - property name, value -property
      * @param pushToken    - token for push notifications if available
      */
-    public void onSendResources(HashMap<String, String> resourcesMap, String pushToken) {
+    public void sendResources(HashMap<String, String> resourcesMap, String pushToken) {
         incrementSeq();
         JSONObject header = createHeader();
         JSONObject msg = new JSONObject();
@@ -239,13 +243,13 @@ public class SocketCallManager
             msg.put(Constants.HEADER, header);
             msg.put(Constants.MSG, msgBody);
         } catch (Exception e) {
-            Logger.d("onSendResources :: " + e.toString());
+            Logger.d("sendResources :: " + e.toString());
         }
 
         sendMessage(msg);
     }
 
-    public void onSendProbe(Probe probe) {
+    public void sendProbe(Probe probe) {
         incrementSeq();
         JSONObject header = createHeader();
 

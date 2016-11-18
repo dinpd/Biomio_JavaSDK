@@ -36,7 +36,7 @@ public class StateConnected implements IStateConnected {
      */
     public void onRegularHandHandShake(String appId, String digest) {
         if(socketCallManager != null) {
-            socketCallManager.onSendRegularHandShake(appId,digest);
+            socketCallManager.sendRegularHandShake(appId,digest);
         }
     }
 

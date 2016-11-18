@@ -16,6 +16,7 @@ public class BiomioSDK {
     private static BiomioSDK instance = null;
     private StateMachine stateMachine;
     private static Options options;
+    private OnBiomioSdkListener listener;
 
     public static boolean debug = false;
     public static boolean connected = false;
@@ -38,7 +39,6 @@ public class BiomioSDK {
         }
         stateMachine = new StateMachine(sslContext, url);
         setOptions(options);
-        debug(true);
         constructed = true;
     }
 
@@ -69,6 +69,9 @@ public class BiomioSDK {
      * Opens socket connection
      */
     public void connect() {
+        if(listener == null){
+            throw new IllegalStateException("Listener is not registered. Call subscribe() in order to receive SDK events");
+        }
         stateMachine.connect();
     }
 
@@ -103,7 +106,13 @@ public class BiomioSDK {
     }
 
     public void subscribe(OnBiomioSdkListener listener) {
-        this.stateMachine.setSdkListener(listener);
+        this.listener = listener;
+        this.stateMachine.setSdkListener(this.listener);
+    }
+    
+    public void unsubscribe() {
+        this.listener = null;
+        this.stateMachine.setSdkListener(null);
     }
 
     /**
