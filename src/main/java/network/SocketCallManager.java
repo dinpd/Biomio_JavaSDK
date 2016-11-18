@@ -260,6 +260,7 @@ public class SocketCallManager
         JSONObject logBody = new JSONObject();
 
         try {
+			if (probe == null || !probe.isValid()) throw new IllegalArgumentException();
             header.put(Constants.APP_ID, BiomioSDK.getOptions().getFingerPrint());
             header.put(Constants.TOKEN, BiomioSDK.getOptions().getHeaderToken());
 
@@ -305,7 +306,9 @@ public class SocketCallManager
 
         } catch (JSONException e) {
             Logger.d(TAG + " sendProbe :: " + e.getMessage());
-        }
+        } catch (IllegalArgumentException e) {
+			Logger.d(TAG + " sendProbe :: " + e.getMessage());
+		}
 
         sendMessage(msg);
     }

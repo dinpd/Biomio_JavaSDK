@@ -41,4 +41,8 @@ public class Probe {
     public void setTryId(String tryId) {
         this.tryId = tryId;
     }
+    
+    public boolean isValid() {
+        return probeData != null;
+    }
 }
