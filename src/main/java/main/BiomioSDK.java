@@ -25,6 +25,7 @@ public class BiomioSDK {
     private boolean constructed = false;
 
     private BiomioSDK(SSLContext sslContext, String url, Options options) {
+		debug = true;
         if (constructed) {
             throw new IllegalArgumentException(EXCEPTION_ILLEGAL_INSTANCE);
         }

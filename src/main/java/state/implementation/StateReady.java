@@ -25,10 +25,12 @@ public class StateReady implements IStateReady {
      * Finalizes nop timer
      */
     public void onFinishNope() {
-        if (timer != null) {
-            Logger.d("onFinishNope :: canceling timer");
-            timer.cancel();
-            timer = null;
+        if (timer != null) synchronized (timer) {
+            if (timer != null) {
+                Logger.d("onFinishNope :: canceling timer");
+                timer.cancel();
+                timer = null;
+            }
         }
     }
 
