@@ -16,33 +16,40 @@ import main.BiomioSDK;
 import main.OnBiomioSdkListener;
 import model.Options;
 import model.Probe;
+import model.ProbeData;
 
 @RunWith(JUnit4.class)
 public class SocketCallManagerTest extends Assert {
 	
-	//Admin
+	//==============================================================================================
+	// For QA
+	//==============================================================================================
 	
 	private static final String SECRET_CODE_VALID = "15595343";
 	
-	//Const
+	//==============================================================================================
+	// Consts
+	//==============================================================================================
 	
-	private static final int CONNECTION_TIMEOUT = 55000;
+	private static final String SECRET_CODE_INVALID = "1234567";
 	
-	private static final String SECRET_CODE_INVALID = "22222222";
-	
-	private static final String STATUS_HELLO_INVALID = "event clientHello inappropriate in current state appregistered";
 	private static final String STATUS_TIMEOUT = "Connection timeout";
-	private static final String STATUS_NO_INTERNET
+	private static final String STATUS_LOST_CONNECTION
 			= "com.neovisionaries.ws.client.WebSocketException: Failed to connect to 'gate.biom.io:8090': gate.biom.io";
-	private static final String STATUS_INVALID_PROBE = "Invalid message sent (message string:{})";
+	private static final String STATUS_INVALID_DATA = "Invalid message sent (message string:{})";
+	private static final String STATUS_INVALID_TOKEN = "Invalid token";
 	private static final String STATUS_REGULAR_HELLO_INVALID = "event clientHello inappropriate in current state appregistered";
+	
+	private static final int TEST_TIMEOUT = 55000;
 	
 	private static BiomioSDK sInstance;
 	
-	//SETUP
+	//==============================================================================================
+	// Prepare
+	//==============================================================================================
 	
 	@BeforeClass
-	public static void setup() throws NoSuchAlgorithmException {
+	public static void init() throws NoSuchAlgorithmException {
 		sInstance = BiomioSDK.initialize(
 				SSLContext.getDefault(),
 				"wss://gate.biom.io:8090/websocket",
@@ -52,11 +59,13 @@ public class SocketCallManagerTest extends Assert {
 	}
 	
 	@AfterClass
-	public static void shutdown() {
+	public static void dispose() {
 		BiomioSDK.destroy();
 	}
 	
-	//Fields
+	//==============================================================================================
+	// Fields
+	//==============================================================================================
 	
 	private final Object uLock = new Object();
 	private final OnBiomioSdkListener uListener = new OnBiomioSdkListener() {
@@ -116,7 +125,6 @@ public class SocketCallManagerTest extends Assert {
 							+ " fingerPrint=" + fingerPrint
 							+ " headerForDigest=" + headerForDigest
 			);
-			mIsRegularHello = true;
 			synchronized (uLock) {
 				uLock.notifyAll();
 			}
@@ -158,12 +166,15 @@ public class SocketCallManagerTest extends Assert {
 	private boolean mIsConnectivityTry;
 	private boolean mIsConnected;
 	private boolean mIsRegistered;
-	private boolean mIsRegularHello;
 	private String mStatus = "";
 	private String mErrorStatus = "";
 	private AbstractSocketCallManager mCallManager;
 	
-	@Test(timeout = CONNECTION_TIMEOUT / 2)
+	//==============================================================================================
+	// Tests
+	//==============================================================================================
+	
+	@Test(timeout = TEST_TIMEOUT)
 	public void connectionFlow() throws Exception {
 		subscribe();
 		assertFalse(mIsConnected);
@@ -181,31 +192,33 @@ public class SocketCallManagerTest extends Assert {
 		assertTrue(isError);
 	}
 	
-	@Test(timeout = CONNECTION_TIMEOUT * 2)
+	@Test(timeout = TEST_TIMEOUT * 2)
 	public void waitForRegistration() throws Exception {
 		subscribe();
 		assertFalse(mIsConnected);
 		connectionFlw();
 		assertTrue(mIsConnected);
+		
 		synchronized (uLock) {
 			while (!mStatus.equals(STATUS_TIMEOUT)) {
 				uLock.wait();
 			}
 		}
 		assertEquals(mStatus, STATUS_TIMEOUT);
+		
 		disconnectionFlw();
 		assertFalse(mIsConnected);
 		unsubscribe();
 	}
 	
-	@Test(timeout = CONNECTION_TIMEOUT / 2)
+	@Test(timeout = TEST_TIMEOUT)
 	public void sendRegistrationHandShake() throws Exception {
 		subscribe();
 		
 		connectionFlw();
 		assertTrue(mIsConnected);
 		registrationFlw(SECRET_CODE_VALID);
-		assertTrue(mIsRegistered);
+		assertTrue(mIsRegistered); //Please enter valid SECRET_CODE_VALID
 		disconnectionFlw();
 		
 		connectionFlw();
@@ -218,7 +231,7 @@ public class SocketCallManagerTest extends Assert {
 		unsubscribe();
 	}
 	
-	@Test(timeout = CONNECTION_TIMEOUT)
+	@Test(timeout = TEST_TIMEOUT)
 	public void sendRegularHello() throws Exception {
 		subscribe();
 		
@@ -242,18 +255,37 @@ public class SocketCallManagerTest extends Assert {
 		unsubscribe();
 	}
 	
-	@Test(timeout = CONNECTION_TIMEOUT)
-	public void sendProbe() throws Exception {
+	@Test(timeout = TEST_TIMEOUT)
+	public void sendEmptyProbe() throws Exception {
 		subscribe();
 		connectionFlw();
 		assertTrue(mIsConnected);
 		assertNotNull(mCallManager);
 		mCallManager.sendProbe(new Probe());
 		synchronized (uLock) {
-			while (!mStatus.equals(STATUS_INVALID_PROBE)) {
+			while (!mStatus.equals(STATUS_INVALID_DATA)) {
 				uLock.wait();
 			}
 		}
+		disconnectionFlw();
+		assertFalse(mIsConnected);
+		unsubscribe();
+	}
+	
+	@Test(timeout = TEST_TIMEOUT)
+	public void sendNullableResources() throws Exception {
+		subscribe();
+		connectionFlw();
+		assertTrue(mIsConnected);
+		
+		assertNotNull(mCallManager);
+		mCallManager.sendResources(null, null);
+		synchronized (uLock) {
+			while (!mStatus.equals(STATUS_INVALID_DATA)) {
+				uLock.wait();
+			}
+		}
+		
 		disconnectionFlw();
 		assertFalse(mIsConnected);
 		unsubscribe();
@@ -263,23 +295,25 @@ public class SocketCallManagerTest extends Assert {
 	 * To pass this test remove your internet connection
 	 */
 	@Ignore
-	@Test(timeout = CONNECTION_TIMEOUT / 2)
+	@Test(timeout = TEST_TIMEOUT / 2)
 	public void reconnectingFlow() throws Exception {
 		subscribe();
 		assertFalse(mIsConnected);
 		sInstance.connect();
 		synchronized (uLock) {
-			while (!mErrorStatus.equals(STATUS_NO_INTERNET)) {
+			while (!mErrorStatus.equals(STATUS_LOST_CONNECTION)) {
 				uLock.wait();
 			}
 		}
-		assertEquals(mErrorStatus, STATUS_NO_INTERNET);
+		assertEquals(mErrorStatus, STATUS_LOST_CONNECTION);
 		disconnectionFlw();
 		//assertFalse(mIsConnected);
 		unsubscribe();
 	}
 	
-	//Support
+	//==============================================================================================
+	// Support
+	//==============================================================================================
 	
 	private void subscribe() {
 		sInstance.subscribe(uListener);

@@ -11,11 +11,9 @@ import javax.net.ssl.SSLContext;
 
 class SocketProvider {
 
-    SocketProvider() {
-    }
+    SocketProvider() {}
 
     WebSocket createWebSocket(SSLContext sslContext, String url) {
-
         Logger.d("createWebSocket :: start");
         WebSocketFactory socketFactory = new WebSocketFactory();
         try {
