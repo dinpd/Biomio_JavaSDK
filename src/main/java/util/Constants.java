@@ -40,6 +40,7 @@ public class Constants {
     public static final String AUTH = "auth";
     public static final String SAMPLES = "samples";
     public static final String PROBE_DATA = "probeData";
+    public static final String IMAGE_SAMPLES = "imageSamples";
     public static final String PROBE_STATUS = "probeStatus";
     public static final String TRY_TYPE = "tType";
     public static final String TRY_ID = "try_id";

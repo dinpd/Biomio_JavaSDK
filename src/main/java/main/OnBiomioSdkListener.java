@@ -28,4 +28,6 @@ public interface OnBiomioSdkListener {
 
     void onResponseStatus(String status);
 
+    void onLog(String log, boolean send);
+
 }

@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import state.StateMachine;
 import util.Constants;
+import util.JsonParser;
 import util.Logger;
 
 import javax.net.ssl.SSLContext;
@@ -48,22 +49,22 @@ public class SocketCallManager
      * Opens Socket connection
      */
     public void connect() {
-		if (sdkListener != null) {
-			sdkListener.onConnecting();
-			
-			if (webSocket == null) {
-				webSocket = socketProvider.createWebSocket(sslContext, url);
-			} else {
-				webSocket.removeListener(this);
-				webSocket.disconnect();
-				webSocket = null;
-				webSocket = socketProvider.createWebSocket(sslContext, url);
-			}
-			webSocket.addListener(this);
-			webSocket.connectAsynchronously();
-			Logger.d(TAG + " :: connect");
-		}
-		 
+        if (sdkListener != null) {
+            sdkListener.onConnecting();
+
+            if (webSocket == null) {
+                webSocket = socketProvider.createWebSocket(sslContext, url);
+            } else {
+                webSocket.removeListener(this);
+                webSocket.disconnect();
+                webSocket = null;
+                webSocket = socketProvider.createWebSocket(sslContext, url);
+            }
+            webSocket.addListener(this);
+            webSocket.connectAsynchronously();
+            Logger.d(TAG + " :: connect");
+        }
+
     }
 
     /**
@@ -260,7 +261,7 @@ public class SocketCallManager
         JSONObject logBody = new JSONObject();
 
         try {
-			if (probe == null || !probe.isValid()) throw new IllegalArgumentException();
+            if (probe == null || !probe.isValid()) throw new IllegalArgumentException();
             header.put(Constants.APP_ID, BiomioSDK.getOptions().getFingerPrint());
             header.put(Constants.TOKEN, BiomioSDK.getOptions().getHeaderToken());
 
@@ -307,8 +308,8 @@ public class SocketCallManager
         } catch (JSONException e) {
             Logger.d(TAG + " sendProbe :: " + e.getMessage());
         } catch (IllegalArgumentException e) {
-			Logger.d(TAG + " sendProbe :: " + e.getMessage());
-		}
+            Logger.d(TAG + " sendProbe :: " + e.getMessage());
+        }
 
         sendMessage(msg);
     }
@@ -399,6 +400,7 @@ public class SocketCallManager
         if (webSocket != null) {
             Logger.d("SENDING " + jsonObject.toString());
             webSocket.sendText(jsonObject.toString());
+            sdkListener.onLog(JsonParser.generateImageProbeLog(jsonObject).toString(), true);
         }
     }
 
@@ -547,6 +549,7 @@ public class SocketCallManager
 
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         Logger.d(TAG + "onTextMessage " + text);
+        sdkListener.onLog(text, false);
         stateMachine.switchState(text);
     }
 

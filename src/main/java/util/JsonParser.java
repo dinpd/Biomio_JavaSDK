@@ -1,7 +1,10 @@
 package util;
 
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class JsonParser {
 
@@ -92,4 +95,21 @@ public class JsonParser {
         }
         return 0;
     }
+
+    public static JSONObject generateImageProbeLog(JSONObject jsonObject) {
+        try {
+            JSONObject msg = jsonObject.getJSONObject(Constants.MSG);
+            JSONObject probeData = msg.getJSONObject(Constants.PROBE_DATA);
+            if (probeData != null) {
+                String oid = probeData.getString(Constants.OID);
+                if (oid.equals(Constants.IMAGE_SAMPLES)) {
+                    probeData.getJSONArray(Constants.SAMPLES).remove(0);
+                }
+            }
+        } catch (Exception e) {
+            return jsonObject;
+        }
+        return jsonObject;
+    }
+
 }
