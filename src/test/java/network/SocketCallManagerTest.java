@@ -161,6 +161,10 @@ public class SocketCallManagerTest extends Assert {
 				uLock.notifyAll();
 			}
 		}
+
+		public void onLog(String log, boolean send) {
+			//skip
+		}
 	};
 	
 	private boolean mIsConnectivityTry;
