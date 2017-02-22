@@ -101,5 +101,5 @@ public class Example {
 //        }
 //    }
 
-    //having performed all actions don't forget to call sdk.unsubscribe();
+    //having performed all actions don't forget to call sdk.unSubscribe();
 }

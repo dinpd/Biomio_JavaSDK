@@ -6,6 +6,7 @@ import util.Validator;
 
 import javax.net.ssl.SSLContext;
 
+//TODO Sign header inside SDK
 public class BiomioSDK {
 
     private static final String EXCEPTION_URL_INVALID = "Invalid URL was passed to SDK";
@@ -110,8 +111,11 @@ public class BiomioSDK {
         this.listener = listener;
         this.stateMachine.setSdkListener(this.listener);
     }
-    
-    public void unsubscribe() {
+
+    /**
+     * Releases listeners
+     */
+    public void unSubscribe() {
         this.listener = null;
         this.stateMachine.setSdkListener(null);
     }

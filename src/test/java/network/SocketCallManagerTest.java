@@ -16,7 +16,6 @@ import main.BiomioSDK;
 import main.OnBiomioSdkListener;
 import model.Options;
 import model.Probe;
-import model.ProbeData;
 
 @RunWith(JUnit4.class)
 public class SocketCallManagerTest extends Assert {
@@ -324,7 +323,7 @@ public class SocketCallManagerTest extends Assert {
 	}
 	
 	private void unsubscribe() {
-		sInstance.unsubscribe();
+		sInstance.unSubscribe();
 	}
 	
 	private void connectionFlw() throws Exception {

@@ -96,4 +96,5 @@ public class Example implements OnBiomioSdkListener {
     }
 
     //having performed all actions don't forget to call sdk.unsubscribe();
+
 }
