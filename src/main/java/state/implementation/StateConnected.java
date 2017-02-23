@@ -18,12 +18,12 @@ public class StateConnected implements IStateConnected {
     /**
      * Sends registration handshake to server
      *
-     * @param token - header token
-     * @param appID - app's fingerprint received from server
+     * @param headerToken - header token
+     * @param appFingerprint - app's fingerprint received from server
      */
-    public void onRegistrationHandshake(String token, String appID) {
+    public void sendRegistrationHandshake(String headerToken, String appFingerprint) {
         if(socketCallManager != null) {
-            socketCallManager.sendRegistrationHandShake(token, appID);
+            socketCallManager.sendRegistrationHandShake(headerToken, appFingerprint);
         }
     }
 
@@ -34,7 +34,7 @@ public class StateConnected implements IStateConnected {
      * @param appId       - fingerprint
      * @param digest      - signed header with private key
      */
-    public void onRegularHandHandShake(String appId, String digest) {
+    public void sendRegularHandHandShake(String appId, String digest) {
         if(socketCallManager != null) {
             socketCallManager.sendRegularHandShake(appId,digest);
         }

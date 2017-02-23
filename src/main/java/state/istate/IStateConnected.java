@@ -1,10 +1,25 @@
 package state.istate;
 
 
+/**
+ * State which describes open connection of a
+ */
 public interface IStateConnected extends IState {
 
-    void onRegistrationHandshake(String token, String appID);
+    /**
+     * Sends registration handshake
+     *
+     * @param headerToken    - header token
+     * @param appFingerprint - fingerprint of the app
+     */
+    void sendRegistrationHandshake(String headerToken, String appFingerprint);
 
-    void onRegularHandHandShake(String appId, String digest);
+    /**
+     * Sends regular handshake
+     *
+     * @param appId  -
+     * @param digest -
+     */
+    void sendRegularHandHandShake(String appId, String digest);
 
 }

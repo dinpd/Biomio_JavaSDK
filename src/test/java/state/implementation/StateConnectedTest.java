@@ -26,7 +26,7 @@ public class StateConnectedTest {
     public void onRegistrationHandshake() throws Exception {
         NullPointerException ex = null;
         try {
-            stateConnected.onRegistrationHandshake(null, null);
+            stateConnected.sendRegistrationHandshake(null, null);
         } catch (NullPointerException e) {
             ex = e;
         }
@@ -37,7 +37,7 @@ public class StateConnectedTest {
     public void onRegularHandHandShake() throws Exception {
         NullPointerException ex = null;
         try {
-            stateConnected.onRegularHandHandShake(null, null);
+            stateConnected.sendRegularHandHandShake(null, null);
         } catch (NullPointerException e) {
             ex = e;
         }

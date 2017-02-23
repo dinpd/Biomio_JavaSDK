@@ -1,18 +1,50 @@
 package model;
 
-
+/**
+ * This model is designated to collect client's initial info for proper SDK functioning
+ */
 public class Options {
 
+    /**
+     * Some unique device id generated on client side
+     */
     private String deviceId = "";
+    /**
+     * Client's operation system's id
+     */
     private String osId = "";
+    /**
+     * Client's netwrok type: ex: Wifi, 3G, 4G, LTE
+     */
     private String networkType = "";
+    /**
+     * TODO
+     */
     private String protoVer = "";
 
-    private int ttl = 0;
-    private String fingerPrint = "";
-    private String refreshToken = "";
-    private String headerToken = "";
 
+    /*
+    FIELDS REQUIRED FOR AUTHORIZED CLIENTS ONLY
+     */
+    /**
+     * Connection duration
+     */
+    private int ttl = 0;
+    /**
+     * Fingerprint which was saved after registration
+     */
+    private String fingerPrint = "";
+    /**
+     * Refresh token which was saved after registration
+     */
+    private String refreshToken = "";
+    /**
+     * Header token which was saved after registration
+     */
+    private String headerToken = "";
+    /*
+    FIELDS REQUIRED FOR AUTHORIZED CLIENTS ONLY
+     */
 
     public Options(String deviceId,
                    String osId,

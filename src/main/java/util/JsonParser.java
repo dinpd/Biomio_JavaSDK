@@ -3,54 +3,105 @@ package util;
 
 import org.json.JSONObject;
 
+/**
+ * This class is responsible for parsing JSON response strings
+ */
 public class JsonParser {
 
-    public static String getStatus(String json) {
-        return getStringValueFromJSON(new JSONObject(json), Constants.STATUS);
+    /**
+     * Retrieves status string from JSON sting
+     *
+     * @param jsonString - JSON string
+     * @return - String value of status, empty value if couldn't retrieve
+     */
+    public static String getStatus(String jsonString) {
+        return getStringValueFromJSON(new JSONObject(jsonString), Constants.STATUS);
     }
 
-    //retrieves probe status from response JSONObject
+
+    /**
+     * Retrieves probe status from response JSONObject
+     *
+     * @param jsonObject {@link JSONObject}
+     * @return - String value of probe status, empty value if couldn't retrieve
+     */
     public static String getProbeStatus(JSONObject jsonObject) {
         return getStringValueFromJSON(jsonObject, Constants.MSG, Constants.PROBE_STATUS);
     }
 
-    //retrives OID of response
+    /**
+     * Retrieves OID of response
+     *
+     * @param json -JSON String
+     * @return - String value of oid , empty value if couldn't retrieve
+     */
+
     public static String getOid(String json) {
         return getStringValueFromJSON(new JSONObject(json), Constants.MSG, Constants.OID);
     }
 
-    //returns RSA private key
+    /**
+     * Returns RSA private key
+     *
+     * @param jsonObject - {@link JSONObject}
+     * @return - String value of RSA private key , empty value if couldn't retrieve
+     */
     public static String getRsaPrivateKey(JSONObject jsonObject) {
         return getStringValueFromJSON(jsonObject, Constants.MSG, Constants.KEY);
     }
 
-    //returns refresh token
+    /**
+     * Returns refresh token
+     *
+     * @param jsonObject - {@link JSONObject}
+     * @return - String value of refresh token , empty value if couldn't retrieve
+     */
     public static String getRefreshToken(JSONObject jsonObject) {
         return getStringValueFromJSON(jsonObject, Constants.MSG, Constants.REFRESH_TOKEN);
     }
 
-    //returns refresh token
+    /**
+     * Returns header token
+     *
+     * @param jsonObject - {@link JSONObject}
+     * @return - String value of header token , empty value if couldn't retrieve
+     */
     public static String getHeaderToken(JSONObject jsonObject) {
         return getStringValueFromJSON(jsonObject, Constants.HEADER, Constants.TOKEN);
     }
 
-    //returns fingerprint
+    /**
+     * Returns fingerprint token
+     *
+     * @param jsonObject - {@link JSONObject}
+     * @return - String value of fingerprint, empty value if couldn't retrieve
+     */
     public static String getFingerprint(JSONObject jsonObject) {
         return getStringValueFromJSON(jsonObject, Constants.MSG, Constants.FINGERPRINT);
     }
 
-    //returns connectionttl int
+    /**
+     * Returns connectionttl int
+     *
+     * @param jsonObject - {@link JSONObject}
+     * @return - int value of connectionTTl, empty value if couldn't retrieve
+     */
     public static int getConnectionTTl(JSONObject jsonObject) {
         return getIntValueFromJSON(jsonObject, Constants.MSG, Constants.CONNECTION_TTL);
     }
 
-    //returns sessionttl int
+    /**
+     * Rreturns sessionttl int
+     *
+     * @param jsonObject - {@link JSONObject}
+     * @return - int value of sessionttl, empty value if couldn't retrieve
+     */
     public static int getSessionTTl(JSONObject jsonObject) {
         return getIntValueFromJSON(jsonObject, Constants.MSG, Constants.SESSION_TTL);
     }
 
     //general method to get string value from JSON only by child key
-    public static String getStringValueFromJSON(JSONObject jsonObject, String childKey) {
+    static String getStringValueFromJSON(JSONObject jsonObject, String childKey) {
         if (jsonObject == null) {
             return Constants.EMPTY_STRING;
         }
@@ -65,7 +116,7 @@ public class JsonParser {
     }
 
     //general method to get string value from JSON by parent key and child key
-    public static String getStringValueFromJSON(JSONObject jsonObject, String parentKey, String childKey) {
+    static String getStringValueFromJSON(JSONObject jsonObject, String parentKey, String childKey) {
         if (jsonObject == null) {
             return Constants.EMPTY_STRING;
         }
@@ -79,7 +130,7 @@ public class JsonParser {
         return Constants.EMPTY_STRING;
     }
 
-    public static int getIntValueFromJSON(JSONObject jsonObject, String parentKey, String childKey) {
+    static int getIntValueFromJSON(JSONObject jsonObject, String parentKey, String childKey) {
         if (jsonObject == null) {
             return 0;
         }

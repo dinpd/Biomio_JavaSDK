@@ -6,8 +6,17 @@ package model;
 public class Probe {
     private ProbeData probeData;
 
+    /**
+     * Status of Try (success/failure)
+     */
     private String status;
+    /**
+     * Type of the try. For ex. face,fingerprint.
+     */
     private String tryType = "";
+    /**
+     * Id of a try
+     */
     private String tryId = "";
 
     public ProbeData getProbeData() {
@@ -41,7 +50,7 @@ public class Probe {
     public void setTryId(String tryId) {
         this.tryId = tryId;
     }
-    
+
     public boolean isValid() {
         return probeData != null;
     }

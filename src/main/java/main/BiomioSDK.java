@@ -15,8 +15,9 @@ public class BiomioSDK {
     private static final String EXCEPTION_ILLEGAL_INSTANCE = "Only one instance of SDK is allowed to be created";
 
     private static BiomioSDK instance = null;
-    private StateMachine stateMachine;
     private static Options options;
+
+    private StateMachine stateMachine;
     private OnBiomioSdkListener listener;
 
     public static boolean debug = false;

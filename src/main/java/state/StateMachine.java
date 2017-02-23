@@ -153,7 +153,7 @@ public class StateMachine {
                 );
 
                 //handshake
-                stateConnected.onRegistrationHandshake(BiomioSDK.getOptions().getHeaderToken(),
+                stateConnected.sendRegistrationHandshake(BiomioSDK.getOptions().getHeaderToken(),
                         BiomioSDK.getOptions().getFingerPrint());
 
                 Logger.d("serverHello :: handshake");

@@ -1,6 +1,9 @@
 package util;
 
 
+/**
+ * This class designated to keep all constants in one place
+ */
 public class Constants {
     public static final String EMPTY_STRING = "";
 

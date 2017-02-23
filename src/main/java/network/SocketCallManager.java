@@ -250,6 +250,11 @@ public class SocketCallManager
         sendMessage(msg);
     }
 
+    /**
+     * Sends {@link Probe} object to gate.
+     *
+     * @param probe - {@link Probe}
+     */
     public void sendProbe(Probe probe) {
         incrementSeq();
         JSONObject header = createHeader();
@@ -370,6 +375,9 @@ public class SocketCallManager
         sendMessage(msg);
     }
 
+    /**
+     * Used to interrupt connection
+     */
     public void sendBye() {
         incrementSeq();
 
