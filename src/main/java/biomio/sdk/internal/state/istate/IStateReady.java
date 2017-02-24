@@ -14,9 +14,10 @@ public interface IStateReady extends IState {
 
     /**
      * Sends heartbeat to server to keep connection open
-     * @param fingerPrint - app fingerprint
+     *
+     * @param fingerPrint  - app fingerprint
      * @param refreshToken - refresh token
-     * @param ttl - connection ttl
+     * @param ttl          - connection ttl
      */
     void onNope(final String fingerPrint, final String refreshToken, int ttl);
 

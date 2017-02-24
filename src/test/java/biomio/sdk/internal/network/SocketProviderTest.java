@@ -13,22 +13,36 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.SSLContext;
 
+/**
+ * The type Socket provider test.
+ */
 @RunWith(JUnit4.class)
 public class SocketProviderTest extends Assert {
 	
 	private SocketProvider mProvider;
-	
-	@Before
+
+    /**
+     * Init.
+     */
+    @Before
 	public void init() {
 		mProvider = new SocketProvider();
 	}
-	
-	@After
+
+    /**
+     * Dispose.
+     */
+    @After
 	public void dispose() {
 		mProvider = null;
 	}
-	
-	@Test
+
+    /**
+     * Create nullable socket.
+     *
+     * @throws NoSuchAlgorithmException the no such algorithm exception
+     */
+    @Test
 	public void createNullableSocket() throws NoSuchAlgorithmException {
 		WebSocket socket;
 		socket = mProvider.createWebSocket(null, null);

@@ -7,20 +7,38 @@ import org.junit.Test;
 
 import javax.net.ssl.SSLContext;
 
+/**
+ * The type Biomio sdk test.
+ */
 public class BiomioSDKTest {
 
+    /**
+     * Initialize null.
+     *
+     * @throws Exception the exception
+     */
     @Test(expected = IllegalArgumentException.class)
     public void initializeNull() throws Exception {
         BiomioSDK.destroy();
         BiomioSDK.initialize(null, null, null);
     }
 
+    /**
+     * Initialize one null.
+     *
+     * @throws Exception the exception
+     */
     @Test(expected = IllegalArgumentException.class)
     public void initializeOneNull() throws Exception {
         BiomioSDK.destroy();
         BiomioSDK.initialize(SSLContext.getDefault(), "", new Options("", "", "", "", "", "", "", -1));
     }
 
+    /**
+     * Initialize valid.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void initializeValid() throws Exception {
         Exception caughtException = null;

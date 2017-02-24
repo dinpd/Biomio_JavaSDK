@@ -11,6 +11,11 @@ public class StateConnected implements IStateConnected {
 
     private SocketCallManager socketCallManager;
 
+    /**
+     * Instantiates a new State connected.
+     *
+     * @param socketCallManager the socket call manager
+     */
     public StateConnected(SocketCallManager socketCallManager) {
         this.socketCallManager = socketCallManager;
     }

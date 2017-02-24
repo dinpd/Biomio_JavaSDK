@@ -1,6 +1,9 @@
 package biomio.sdk.internal.util;
 
 
+/**
+ * The type Validator.
+ */
 public class Validator {
 
     /**

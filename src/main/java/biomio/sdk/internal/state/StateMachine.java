@@ -36,6 +36,12 @@ public class StateMachine {
     private IStateConnected stateConnected;
     private IStateReady stateReady;
 
+    /**
+     * Instantiates a new State machine.
+     *
+     * @param context the context
+     * @param url     the url
+     */
     public StateMachine(SSLContext context, String url) {
         this.socketCallManager = new SocketCallManager(context, url, this);
 

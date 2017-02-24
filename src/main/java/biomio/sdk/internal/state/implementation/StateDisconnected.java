@@ -12,6 +12,11 @@ public class StateDisconnected implements IStateDisconnected {
 
     private SocketCallManager socketCallManager;
 
+    /**
+     * Instantiates a new State disconnected.
+     *
+     * @param socketCallManager the socket call manager
+     */
     public StateDisconnected(SocketCallManager socketCallManager) {
         this.socketCallManager = socketCallManager;
     }

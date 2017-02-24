@@ -6,6 +6,9 @@ import biomio.sdk.internal.util.Validator;
 
 import javax.net.ssl.SSLContext;
 
+/**
+ * The type Biomio sdk.
+ */
 //TODO Sign header inside SDK
 public class BiomioSDK {
 
@@ -20,8 +23,17 @@ public class BiomioSDK {
     private StateMachine stateMachine;
     private OnBiomioSdkListener listener;
 
+    /**
+     * The constant debug.
+     */
     public static boolean debug = false;
+    /**
+     * The constant connected.
+     */
     public static boolean connected = false;
+    /**
+     * The constant retry.
+     */
     public static boolean retry = true;
 
     private boolean constructed = false;
@@ -63,7 +75,10 @@ public class BiomioSDK {
         return instance;
     }
 
-    //*used for tests
+    /**
+     * Destroy.
+     */
+//*used for tests
     public static void destroy() {
         BiomioSDK.instance = null;
     }
@@ -104,10 +119,20 @@ public class BiomioSDK {
         BiomioSDK.options = options;
     }
 
+    /**
+     * Gets options.
+     *
+     * @return the options
+     */
     public static Options getOptions() {
         return options;
     }
 
+    /**
+     * Subscribe.
+     *
+     * @param listener the listener
+     */
     public void subscribe(OnBiomioSdkListener listener) {
         this.listener = listener;
         this.stateMachine.setSdkListener(this.listener);

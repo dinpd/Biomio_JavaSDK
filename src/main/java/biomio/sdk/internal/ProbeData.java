@@ -14,18 +14,38 @@ public class ProbeData {
      */
     private String sample = "";
 
+    /**
+     * Gets oid.
+     *
+     * @return the oid
+     */
     public String getOid() {
         return oid;
     }
 
+    /**
+     * Sets oid.
+     *
+     * @param oid the oid
+     */
     public void setOid(String oid) {
         this.oid = oid;
     }
 
+    /**
+     * Gets sample.
+     *
+     * @return the sample
+     */
     public String getSample() {
         return sample;
     }
 
+    /**
+     * Sets sample.
+     *
+     * @param sample the sample
+     */
     public void setSample(String sample) {
         this.sample = sample;
     }

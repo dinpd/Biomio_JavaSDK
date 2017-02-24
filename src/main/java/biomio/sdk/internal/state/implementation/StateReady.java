@@ -17,6 +17,11 @@ public class StateReady implements IStateReady {
 
     private SocketCallManager socketCallManager;
 
+    /**
+     * Instantiates a new State ready.
+     *
+     * @param socketCallManager the socket call manager
+     */
     public StateReady(SocketCallManager socketCallManager) {
         this.socketCallManager = socketCallManager;
     }

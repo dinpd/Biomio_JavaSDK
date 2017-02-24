@@ -17,6 +17,9 @@ import biomio.sdk.OnBiomioSdkListener;
 import biomio.sdk.internal.Options;
 import biomio.sdk.internal.Probe;
 
+/**
+ * The type Socket call manager test.
+ */
 @RunWith(JUnit4.class)
 public class SocketCallManagerTest extends Assert {
 	
@@ -46,8 +49,13 @@ public class SocketCallManagerTest extends Assert {
 	//==============================================================================================
 	// Prepare
 	//==============================================================================================
-	
-	@BeforeClass
+
+    /**
+     * Init.
+     *
+     * @throws NoSuchAlgorithmException the no such algorithm exception
+     */
+    @BeforeClass
 	public static void init() throws NoSuchAlgorithmException {
 		sInstance = BiomioSDK.initialize(
 				SSLContext.getDefault(),
@@ -56,8 +64,11 @@ public class SocketCallManagerTest extends Assert {
 		);
 		BiomioSDK.setRetry(false);
 	}
-	
-	@AfterClass
+
+    /**
+     * Dispose.
+     */
+    @AfterClass
 	public static void dispose() {
 		BiomioSDK.destroy();
 	}
@@ -176,8 +187,13 @@ public class SocketCallManagerTest extends Assert {
 	//==============================================================================================
 	// Tests
 	//==============================================================================================
-	
-	@Test(timeout = TEST_TIMEOUT)
+
+    /**
+     * Connection flow.
+     *
+     * @throws Exception the exception
+     */
+    @Test(timeout = TEST_TIMEOUT)
 	public void connectionFlow() throws Exception {
 		subscribe();
 		assertFalse(mIsConnected);
@@ -194,8 +210,13 @@ public class SocketCallManagerTest extends Assert {
 		}
 		assertTrue(isError);
 	}
-	
-	@Test(timeout = TEST_TIMEOUT * 2)
+
+    /**
+     * Wait for registration.
+     *
+     * @throws Exception the exception
+     */
+    @Test(timeout = TEST_TIMEOUT * 2)
 	public void waitForRegistration() throws Exception {
 		subscribe();
 		assertFalse(mIsConnected);
@@ -213,8 +234,13 @@ public class SocketCallManagerTest extends Assert {
 		assertFalse(mIsConnected);
 		unsubscribe();
 	}
-	
-	@Test(timeout = TEST_TIMEOUT)
+
+    /**
+     * Send registration hand shake.
+     *
+     * @throws Exception the exception
+     */
+    @Test(timeout = TEST_TIMEOUT)
 	public void sendRegistrationHandShake() throws Exception {
 		subscribe();
 		
@@ -233,8 +259,13 @@ public class SocketCallManagerTest extends Assert {
 		
 		unsubscribe();
 	}
-	
-	@Test(timeout = TEST_TIMEOUT)
+
+    /**
+     * Send regular hello.
+     *
+     * @throws Exception the exception
+     */
+    @Test(timeout = TEST_TIMEOUT)
 	public void sendRegularHello() throws Exception {
 		subscribe();
 		
@@ -257,8 +288,13 @@ public class SocketCallManagerTest extends Assert {
 		
 		unsubscribe();
 	}
-	
-	@Test(timeout = TEST_TIMEOUT)
+
+    /**
+     * Send empty probe.
+     *
+     * @throws Exception the exception
+     */
+    @Test(timeout = TEST_TIMEOUT)
 	public void sendEmptyProbe() throws Exception {
 		subscribe();
 		connectionFlw();
@@ -274,8 +310,13 @@ public class SocketCallManagerTest extends Assert {
 		assertFalse(mIsConnected);
 		unsubscribe();
 	}
-	
-	@Test(timeout = TEST_TIMEOUT)
+
+    /**
+     * Send nullable resources.
+     *
+     * @throws Exception the exception
+     */
+    @Test(timeout = TEST_TIMEOUT)
 	public void sendNullableResources() throws Exception {
 		subscribe();
 		connectionFlw();
@@ -293,11 +334,13 @@ public class SocketCallManagerTest extends Assert {
 		assertFalse(mIsConnected);
 		unsubscribe();
 	}
-	
-	/**
-	 * To pass this test remove your internet connection
-	 */
-	@Ignore
+
+    /**
+     * To pass this test remove your internet connection
+     *
+     * @throws Exception the exception
+     */
+    @Ignore
 	@Test(timeout = TEST_TIMEOUT / 2)
 	public void reconnectingFlow() throws Exception {
 		subscribe();

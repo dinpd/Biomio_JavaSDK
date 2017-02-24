@@ -8,10 +8,23 @@ import biomio.sdk.internal.util.Validator;
 
 import javax.net.ssl.SSLContext;
 
+/**
+ * The type Socket provider.
+ */
 class SocketProvider {
 
+    /**
+     * Instantiates a new Socket provider.
+     */
     SocketProvider() {}
 
+    /**
+     * Create web socket web socket.
+     *
+     * @param sslContext the ssl context
+     * @param url        the url
+     * @return the web socket
+     */
     WebSocket createWebSocket(SSLContext sslContext, String url) {
         Logger.d("createWebSocket :: start");
         WebSocketFactory socketFactory = new WebSocketFactory();

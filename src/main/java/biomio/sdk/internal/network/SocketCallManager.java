@@ -18,6 +18,9 @@ import javax.net.ssl.SSLContext;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * The type Socket call manager.
+ */
 public class SocketCallManager
         extends AbstractSocketCallManager
         implements
@@ -38,6 +41,13 @@ public class SocketCallManager
 
     private boolean connected = false;
 
+    /**
+     * Instantiates a new Socket call manager.
+     *
+     * @param sslContext   the ssl context
+     * @param url          the url
+     * @param stateMachine the state machine
+     */
     public SocketCallManager(SSLContext sslContext, String url, StateMachine stateMachine) {
         this.socketProvider = new SocketProvider();
         this.stateMachine = stateMachine;
@@ -325,7 +335,6 @@ public class SocketCallManager
      * @param token - header token
      * @param appId - app's fingerprint received from server
      */
-
     public void sendRegistrationHandShake(String token, String appId) {
         incrementSeq();
         JSONObject header = createHeader();

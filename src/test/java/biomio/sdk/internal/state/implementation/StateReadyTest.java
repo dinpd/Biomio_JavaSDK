@@ -7,21 +7,39 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
+/**
+ * The type State ready test.
+ */
 public class StateReadyTest {
 
     private StateReady stateReady;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
         stateReady = new StateReady(null);
 
     }
 
+    /**
+     * Tear down.
+     *
+     * @throws Exception the exception
+     */
     @After
     public void tearDown() throws Exception {
         stateReady = null;
     }
 
+    /**
+     * On finish nope.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void onFinishNope() throws Exception {
         NullPointerException ex = null;
@@ -34,6 +52,11 @@ public class StateReadyTest {
 
     }
 
+    /**
+     * On nope.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void onNope() throws Exception {
         NullPointerException ex = null;

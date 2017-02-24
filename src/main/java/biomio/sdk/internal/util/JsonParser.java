@@ -35,7 +35,6 @@ public class JsonParser {
      * @param json -JSON String
      * @return - String value of oid , empty value if couldn't retrieve
      */
-
     public static String getOid(String json) {
         return getStringValueFromJSON(new JSONObject(json), Constants.MSG, Constants.OID);
     }
@@ -100,7 +99,14 @@ public class JsonParser {
         return getIntValueFromJSON(jsonObject, Constants.MSG, Constants.SESSION_TTL);
     }
 
-    //general method to get string value from JSON only by child key
+    /**
+     * Gets string value from json.
+     *
+     * @param jsonObject the json object
+     * @param childKey   the child key
+     * @return the string value from json
+     */
+//general method to get string value from JSON only by child key
     static String getStringValueFromJSON(JSONObject jsonObject, String childKey) {
         if (jsonObject == null) {
             return Constants.EMPTY_STRING;
@@ -115,7 +121,15 @@ public class JsonParser {
         return Constants.EMPTY_STRING;
     }
 
-    //general method to get string value from JSON by parent key and child key
+    /**
+     * Gets string value from json.
+     *
+     * @param jsonObject the json object
+     * @param parentKey  the parent key
+     * @param childKey   the child key
+     * @return the string value from json
+     */
+//general method to get string value from JSON by parent key and child key
     static String getStringValueFromJSON(JSONObject jsonObject, String parentKey, String childKey) {
         if (jsonObject == null) {
             return Constants.EMPTY_STRING;
@@ -130,6 +144,14 @@ public class JsonParser {
         return Constants.EMPTY_STRING;
     }
 
+    /**
+     * Gets int value from json.
+     *
+     * @param jsonObject the json object
+     * @param parentKey  the parent key
+     * @param childKey   the child key
+     * @return the int value from json
+     */
     static int getIntValueFromJSON(JSONObject jsonObject, String parentKey, String childKey) {
         if (jsonObject == null) {
             return 0;
@@ -144,6 +166,12 @@ public class JsonParser {
         return 0;
     }
 
+    /**
+     * Generate image probe log json object.
+     *
+     * @param jsonObject the json object
+     * @return the json object
+     */
     public static JSONObject generateImageProbeLog(JSONObject jsonObject) {
         try {
             JSONObject msg = jsonObject.getJSONObject(Constants.MSG);
