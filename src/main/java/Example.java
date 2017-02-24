@@ -1,11 +1,3 @@
-import main.BiomioSDK;
-import main.OnBiomioSdkListener;
-import model.Probe;
-import network.AbstractSocketCallManager;
-
-import java.util.HashMap;
-
-
 public class Example {
 //
 //    private BiomioSDK sdk;
@@ -15,7 +7,7 @@ public class Example {
 //        Options options = new Options(
 //           deviceId, id of the device generated on client side
 //           osId, //os id
-//           networkType, // type of network ex. WiFi
+//           networkType, // type of biomio.sdk.internal.network ex. WiFi
 //          "1.0",
 //           refreshToken, // refreshToken, may be empty if client doesn't have it
 //           appId, // appId which may be empty if client doesn't have it

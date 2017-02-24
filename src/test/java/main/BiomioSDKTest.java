@@ -1,10 +1,9 @@
 package main;
 
-import model.Options;
-import network.AbstractSocketCallManager;
+import biomio.sdk.BiomioSDK;
+import biomio.sdk.internal.Options;
 import org.junit.Assert;
 import org.junit.Test;
-import util.Logger;
 
 import javax.net.ssl.SSLContext;
 
