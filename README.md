@@ -1,4 +1,4 @@
-This is Biomio Java SDK which is designated for desctop as well as mobile usage.
+This is Biomio Java SDK which is designated for server as well as mobile usage.
 
 public class Example implements OnBiomioSdkListener {
 
