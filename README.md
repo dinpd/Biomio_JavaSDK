@@ -98,3 +98,9 @@ public class Example implements OnBiomioSdkListener {
     //having performed all actions don't forget to call sdk.unsubscribe();
 
 }
+
+========
+
+Biomio - adaptive multi-factor authenticator with emphasis on passwordless via AI
+
+//developed with help from Vakoms Digital Transformation Services - vakoms.com
